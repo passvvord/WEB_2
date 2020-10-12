@@ -1,0 +1,12 @@
+.gitattributes
+.git/
+# 01/__pycache__/
+02/__pycache__/
+03/__pycache__/
+04/__pycache__/
+05/__pycache__/
+06/__pycache__/
+07/__pycache__/
+08/__pycache__/
+09/__pycache__/
+10/__pycache__/
