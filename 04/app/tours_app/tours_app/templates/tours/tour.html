@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %} {{tour}} {% endblock %}
+
+{% block content %}
+
+{{tour.name}}<br>
+<style type="text/css">
+	img {
+		width: 20vh;
+	}
+</style>
+<img src="{{tour.photo_url}}"><br>
+{{tour.regione}}<br>
+<pre>
+звичний місяць для проведення : {{tour.month}}
+тривалість походу в дняхм     : {{tour.days_len}}
+складність                    : {{tour.difficulty}}
+довжина маршруту              : {{tour.tour_len}} км
+</pre>
+
+{% if login %}
+	<a href="{% url 'tours:add_person' tour.id %}"></a>
+{% else %}
+	<font color="#f00">Зареєструйтесь або ввійдіть для того щоб мати можливіть взяти участь в поході</font>
+{% endif %}
+
+
+{% endblock %}
