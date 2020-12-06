@@ -14,16 +14,23 @@
 
 			.tour_details_link {
 				color: #fff;
-				width: 80vw;
+				width: 100vh;
 				background: rgb(20,20,20);
 				border-radius: 1vh;
     			overflow: hidden;
     			margin: 1vh;
 			}
 
+			@media (max-width: 100vh) {
+				.tour_details_link {
+					width: 100vw;
+					border-radius: 0vh;
+				}
+			}
+
 			.tour_details_link > .img > img {
 				height: 25vh;
-				width: 80vw;
+				width: 100%;
 				object-fit: cover;
 
 			}
