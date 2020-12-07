@@ -3,6 +3,23 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 
 from .models import Tour,Tour_event,Person
+# from request import get as GET, put as PUT, delete as DELETE
+
+import json
+from django.conf import settings
+import redis
+
+redis_instance = redis.StrictRedis(host=settings.REDIS_HOST,port=settings.REDIS_PORT, db=0)
+
+# redis -> R
+def Rget(key):
+	return redis_instance.get(key)
+
+def Rput(key,val):
+	redis_instance.set(key, val)
+
+def Rdelete(key):
+	redis_instance.delete(key)
 
 # http://127.0.0.1:8000
 def start(request):
@@ -11,32 +28,31 @@ def start(request):
 # http://127.0.0.1:8000/tour_list
 def tour_list_view(request):
 	tour_list = Tour.objects.order_by('difficulty')
-	try:
-		a = Person.objects.get(id = request.session.get('PersonID'))
-		return render(request, 'tours/tours_list.html', {'tour_list': tour_list,'login':a})
-	except:
-		pass
+
+	PersonID = Rget('PersonID')
+	if PersonID:
+		login = Person.objects.get(id = int(PersonID))
+		return render(request, 'tours/tours_list.html', {'tour_list': tour_list,'login':login})
 
 	return render(request, 'tours/tours_list.html', {'tour_list': tour_list})
 
 # http://127.0.0.1:8000/tour_list/<int:tour_id>
 def tour_view(request, tour_id):
 	try:
-		a = Tour.objects.get(id = tour_id)
+		tour = Tour.objects.get(id = tour_id)
 	except:
 		raise Http404('Виникла помилка, походу з таким id не має)')
 
-	try:
-		b = Person.objects.get(id = request.session['PersonID'])
-		return render(request, 'tours/tour.html', {'tour': a,'login': b})
-	except:
-		pass
+	PersonID = Rget('PersonID')
+	if PersonID:
+		login = Person.objects.get(id = int(PersonID))
+		return render(request, 'tours/tour.html', {'tour': tour,'login': login})
 
-	return render(request, 'tours/tour.html', {'tour': a})
+	return render(request, 'tours/tour.html', {'tour': tour})
 
 # http://127.0.0.1:8000/tour_list/<int:tour_id>/add_person
-# def add_person(request, tour_id):
-# 	return
+def add_person(request, tour_id):
+	return HttpResponseRedirect(reverse('tours:start'))
 
 # http://127.0.0.1:8000/register
 def register_view(request):
@@ -44,7 +60,7 @@ def register_view(request):
 
 # http://127.0.0.1:8000/register/create_person
 def create_person(request):
-	a = Person(
+	user = Person(
 		nickname  = request.GET['nickname' ],
 		password  = request.GET['password' ], 
 		name      = request.GET['name'     ],
@@ -54,8 +70,8 @@ def create_person(request):
 		condition = request.GET['condition'],
 	)
 
-	a.save()
-	request.session['PersonID'] = a.id
+	user.save()
+	Rput('PersonID',user.id)
 
 	return HttpResponseRedirect(reverse('tours:tour_list_view'))
 
@@ -66,9 +82,9 @@ def log_in_view(request):
 # http://127.0.0.1:8000/log_in/check
 def log_in(request):
 	try:
-		m = Person.objects.get(nickname=request.GET['nickname'])
-		if m.password == request.GET['password']:
-			request.session['PersonID'] = m.id
+		user = Person.objects.get(nickname=request.GET['nickname'])
+		if user.password == request.GET['password']:
+			Rput('PersonID',user.id)
 			return HttpResponseRedirect(reverse('tours:tour_list_view'))
 		else:
 			return Http404('Такого Акаунту з таким паролем не існує')
@@ -78,10 +94,7 @@ def log_in(request):
 
 # http://127.0.0.1:8000/log_out
 def log_out(request):
-	try:
-		del request.session['PersonID']
-	except:
-		pass
+	Rdelete('PersonID')
 	return HttpResponseRedirect(reverse('tours:tour_list_view'))
 
 

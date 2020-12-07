@@ -44,7 +44,7 @@ class Person(models.Model):
 	tour_event = models.ForeignKey(Tour_event,on_delete = models.SET_NULL,blank=True,null=True) # одна людина не може бути записана одночасно в 2 походи (тому такий зв`язок є коректним)
 
 	def __str__(self):
-		return self.name
+		return f'{self.id}. {self.name}({self.nickname})'
 
 	class Meta:
 		verbose_name = 'Учасник'
