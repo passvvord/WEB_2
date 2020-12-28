@@ -3,7 +3,6 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 
 from .models import Tour,Tour_event,Person
-# from request import get as GET, put as PUT, delete as DELETE
 
 import json
 from django.conf import settings

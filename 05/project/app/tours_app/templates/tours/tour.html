@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %} {{tour}} {% endblock %}
+
+{% block content %}
+<style type="text/css">
+	img {
+		width: 40vw;
+	}
+
+	.h1 {
+		font-size: 5vh;
+	}
+
+	a {
+		font-size: 2vh;
+		color: #0a0;
+	}
+
+	@media (max-width: 100vh) {
+		img {
+			width: 100%;
+		}
+	}
+</style>
+
+<div class="h1">{{tour.name}}</div><br>
+<img src="{{tour.photo_url}}"><br>
+{{tour.regione}}<br>
+<pre>
+звичний місяць для проведення : {{tour.month}}
+тривалість походу в дняхм     : {{tour.days_len}}
+складність                    : {{tour.difficulty}}
+довжина маршруту              : {{tour.tour_len}} км
+</pre>
+
+{% if login %}
+	<a href="{% url 'tours:add_person' tour.id %}">прийняти участь в поході</a>
+{% else %}
+	<font color="#f00">Зареєструйтесь або ввійдіть для того щоб мати можливіть взяти участь в поході</font>
+{% endif %}
+
+
+{% endblock %}

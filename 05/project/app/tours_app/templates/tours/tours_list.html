@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %} Список походів {% endblock %}
+
+{% block content %} 
+	{% if tour_list %}
+		<style type="text/css">
+			.all_list {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+			}
+
+			.tour_details_link {
+				color: #fff;
+				width: 100vh;
+				background: rgb(20,20,20);
+				border-radius: 1vh;
+    			overflow: hidden;
+    			margin: 1vh;
+			}
+
+			@media (max-width: 100vh) {
+				.tour_details_link {
+					width: 100vw;
+					border-radius: 0vh;
+				}
+			}
+
+			.tour_details_link > .img > img {
+				height: 25vh;
+				width: 100%;
+				object-fit: cover;
+
+			}
+
+			.tour_details_link > .name {
+				margin: 0 1.5vh;
+				font-size: 5vh;
+			}
+
+			.tour_details_link > .reg {
+				margin: 1vh 1.5vh;
+				font-size: 1.5vh;
+			}
+
+
+		</style>
+		<div class="all_list">
+			{% for a in tour_list %}
+				<a href="{% url 'tours:tour_view' a.id %}">
+					<div class="tour_details_link">
+						<div class="img"><img src="{{a.photo_url}}"></div>
+						<div class="name">{{a.name}}</div>
+						<div class="reg">{{a.regione}}</div>
+					</div>	
+				</a>
+			{% endfor %}
+		</div>
+	{% else %}
+		нічого не знайдено
+	{% endif %}
+{% endblock %}
